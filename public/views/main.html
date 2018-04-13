@@ -6,8 +6,8 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
   <title>Dashboard</title>
 
-  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/unleashed.css">
+  <link rel="stylesheet" href="/public/dist/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/dist/unleashed.css">
 </head>
 <body onload="initialize();">
 
@@ -71,11 +71,11 @@
 
  <!-- Globe -->
 <script src="http://www.webglearth.com/v2/api.js"></script>
-<script src="/unleashed-dashboard/public/dist/jquery/jquery.min.js"> </script>
+<script src="/public/dist/jquery/jquery.min.js"> </script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="/unleashed-dashboard/public/dist/bootstrap/bootstrap.min.js"> </script>
+<script src="/public/dist/bootstrap/bootstrap.min.js"> </script>
 
     <script>
       function initialize() {
@@ -84,10 +84,10 @@
                 minZoom: 10,
                 maxZoom: 16 };
 
-        WE.tileLayer('/unleashed-dashboard/public/dist/image/opacity/{z}/{x}/{y}.png').addTo(earth);
+        WE.tileLayer('/public/dist/image/opacity/{z}/{x}/{y}.png').addTo(earth);
 
 
-       var markerCustom = WE.marker([10, 120], '/unleashed-dashboard/public/dist/image/ripple.gif', 46, 46).addTo(earth);
+       var markerCustom = WE.marker([10, 120], '/public/dist/image/ripple.gif', 46, 46).addTo(earth);
        // markerCustom.bindPopup('<b>Hello world!</b>');
         // Start a simple rotation animation
         var before = null;
@@ -100,7 +100,7 @@
         });
 
         var showInfo = function(e) {
-          window.location = '/unleashed-dashboard/public/views/map.html';
+          window.location = '/public/views/map.html';
          //alert('YI');
        }
        markerCustom.on('click', showInfo);
@@ -123,7 +123,7 @@
                     events:{
                       load: function () {
                       setInterval(function () {
-                        $.get("/unleashed-dashboard/public/bar", function(data, status){
+                        $.get("/public/bar", function(data, status){
                           var temp = JSON.parse(data);
                           // console.log(temp);
                           barChart.series[0].setData([temp['Nov'].dd, temp['Nov'].prod, temp['Nov'].sla, temp['Nov'].avail]);
@@ -199,7 +199,7 @@
             events:{
               load: function () {
                 setInterval(function () {
-                  $.get("/unleashed-dashboard/public/pie", function(data, status){
+                  $.get("/public/pie", function(data, status){
                     var temp = JSON.parse(data);
                     // console.log(temp);
                     pieChart.series[0].setData([['Green', temp.green], ['Yellow', temp.yellow], ['Red', temp.red]]);
@@ -288,7 +288,7 @@
             events:{
               load: function () {
                 setInterval(function () {
-                  $.get("/unleashed-dashboard/public/area", function(data, status){
+                  $.get("/public/area", function(data, status){
                     var temp = JSON.parse(data);
                     // console.log(temp);
                     areaChart.series[0].setData([temp['PH'].edge, temp['PH'].ppmc, temp['PH'].alm, temp['PH'].ldsm]);
@@ -374,7 +374,7 @@
             events:{
               load: function () {
                 setInterval(function () {
-                  $.get("/unleashed-dashboard/public/radar", function(data, status){
+                  $.get("/public/radar", function(data, status){
                     var temp = JSON.parse(data);
                     radarChart.series[0].setData(temp);
                   });

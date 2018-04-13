@@ -6,15 +6,15 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
   <title> Unleashed</title>
 
-  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/unleashed.css">
-  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/jvectormap/jquery-jvectormap.css" type="text/css" media="screen"/>
+  <link rel="stylesheet" href="/public/dist/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/dist/unleashed.css">
+  <link rel="stylesheet" href="/public/dist/jvectormap/jquery-jvectormap.css" type="text/css" media="screen"/>
 </head>
 <body>
 <div class="container" id="main">
       <div class="row">
-        <a href="/unleashed-dashboard/public/views/main.html">
-    <img id="mapSwitch" src="/unleashed-dashboard/public/dist/image/globe.png" style="width:30px;height:30px;">
+        <a href="/public/views/main.html">
+    <img id="mapSwitch" src="/public/dist/image/globe.png" style="width:30px;height:30px;">
 </a>
       <div class="upperContainer" style="height: 80%">
           	<div class="col-lg-8">
@@ -77,10 +77,10 @@
   </div>
 </div>
 
-<script src="/unleashed-dashboard/public/dist/jquery/jquery.min.js"> </script>
-<script src="/unleashed-dashboard/public/dist/jvectormap/jquery-ui.min.js"></script>
-<script src="/unleashed-dashboard/public/dist/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
-<script src="/unleashed-dashboard/public/dist/jvectormap/tests/assets/jquery-jvectormap-world-mill-en.js"></script>
+<script src="/public/dist/jquery/jquery.min.js"> </script>
+<script src="/public/dist/jvectormap/jquery-ui.min.js"></script>
+<script src="/public/dist/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
+<script src="/public/dist/jvectormap/tests/assets/jquery-jvectormap-world-mill-en.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 
 <script>
@@ -126,11 +126,11 @@
         },
         onMarkerClick: function(e, index){
           if(accounts[index].name == 'Philippines'){
-              window.open('/unleashed-dashboard/public/views/map.html', '_self');
+              window.open('/public/views/map.html', '_self');
 
           }
           if(accounts[index].name == 'India'){
-             window.open('/unleashed-dashboard/public/views/india.html', '_self');
+             window.open('/public/views/india.html', '_self');
 
           }
         },
@@ -146,11 +146,11 @@
           markers: [{
             attribute: 'image',
             scale: {
-              'pg': '/unleashed-dashboard/public/dist/image/ripple.gif',
-              'skf': '/unleashed-dashboard/public/dist/image/ripple.gif',
-              'vodafone': '/unleashed-dashboard/public/dist/image/ripple.gif',
-              'alu': '/unleashed-dashboard/public/dist/image/ripple.gif',
-              'shell': '/unleashed-dashboard/public/dist/image/ripple.gif'
+              'pg': '/public/dist/image/ripple.gif',
+              'skf': '/public/dist/image/ripple.gif',
+              'vodafone': '/public/dist/image/ripple.gif',
+              'alu': '/public/dist/image/ripple.gif',
+              'shell': '/public/dist/image/ripple.gif'
             },
             values: accounts.reduce(function(p, c, i){ p[i] = c.status; return p }, {})
           }],
@@ -244,7 +244,7 @@
             events:{
               load: function () {
                 setInterval(function () {
-                  $.get("/unleashed-dashboard/public/pie", function(data, status){
+                  $.get("/public/pie", function(data, status){
                     var temp = JSON.parse(data);
                     // console.log(temp);
                     pieChart.series[0].setData([['Green', temp.green]]);

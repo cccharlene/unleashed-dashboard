@@ -301,6 +301,11 @@
         title: {
             text: null
         },
+        legend: {
+            itemStyle: {
+                color: 'white'
+            }
+        },
         xAxis: {
             categories: [
                 'Edge Compliance',
@@ -391,15 +396,18 @@
         credits:{
           enabled:false
         },
+        legend:{
+            itemStyle:{
+                color:'white'
+            }
+        },
         pane: {
             size: '85%',
             background:[{
               backgroundColor: "rgba(50, 50, 50, 0.25)",
               borderColor: 'rgba(50,50,50,0.5)'
             }]
-
         },
-
         xAxis: {
             min: 0,
             max: 300,
@@ -446,7 +454,6 @@
               pointPlacement: 'on',
               borderColor: 'white'
           }
-        }
     });
 
   }//initialize

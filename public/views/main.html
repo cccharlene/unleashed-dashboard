@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/public/dist/unleashed.css">
 </head>
 <body onload="initialize();">
-
+<div class="loader"></div>
 <div class="container" id="main">
     <div id="earth_div"></div>
     <div class="row">
@@ -76,12 +76,13 @@
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="/public/dist/bootstrap/bootstrap.min.js"> </script>
-<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.0/dist/loadingoverlay.min.js"> </script>
-
-    <script>
+<script>
+    $(window).load(function(){
+        $('.loader').fadeOut();
+    });
+</script>
+<script>
       function initialize() {
-          // Show full page LoadingOverlay
-          $.LoadingOverlay("show");
 
         var earth = new WE.map('earth_div');
         var options = { bounds: [[35.98245136, -112.26379395],[36.13343831, -112.10998535]],
@@ -461,18 +462,6 @@
           }
         }
     });
-
-
-              if(document.readyState === 'ready' || document.readyState === 'complete') {
-                           $.LoadingOverlay("hide");
-                } else {
-                  document.onreadystatechange = function () {
-                    if (document.readyState == "complete") {
-                                $.LoadingOverlay("hide");
-                    }
-                  }
-                }
-
   }//initialize
   </script>
 </body>

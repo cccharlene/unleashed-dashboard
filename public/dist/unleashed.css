@@ -1,6 +1,6 @@
 @font-face {
 font-family: Olney;
-src: url("/unleashed/dist/bootstrap/fonts/olney_light.otf") format("opentype");
+src: url("/public/dist/bootstrap/fonts/olney_light.otf") format("opentype");
 }
 html, body
 {

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="A tool that handles user access.">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+  <title>Dashboard</title>
+
+  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="/unleashed-dashboard/public/dist/unleashed.css">
+</head>
+<body onload="initialize();">
+
+<div class="container" id="main">
+    <div id="earth_div"></div>
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="panel panel-primary">
+          <div class="panel-body">
+              <div id="bar"> </div>
+              <span class="bigNumbers">63</span> incidents reported
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="panel panel-info">
+          <div class="panel-body">
+              <h3>Good morning, Char!</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <div class="panel panel-primary">
+          <div class="panel-body">
+             <div class="col-lg-6" id="pie"> </div>
+             <div class="col-lg-6" id="logs">
+               <marquee direction="up" height="250">
+                  <small>
+                 <p>[11/25/2016]: Duis sollicitudin ex non eleifend dignissim. Aliquam enim lorem, iaculis vitae aliquet ut, consequat at mauris.</p>
+                 <p>[11/25/2016]: Quisque tempus ex nunc, eget suscipit ipsum cursus ut. Sed gravida lectus in libero facilisis, vitae dictum dui dapibus. </p>
+                 <p>[11/25/2016]: Sed dictum ipsum enim, non ornare magna dignissim vel.</p>
+                 <p>[11/25/2016]: nteger lobortis metus tellus, vel consectetur sem malesuada id. Aliquam congue nunc at consectetur pulvinar.</p></small>
+               </marquee>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <div class="panel panel-primary">
+          <div class="panel-body">
+            <div id="radar"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-lg-offset-6">
+        <div class="panel panel-primary">
+          <div class="panel-body">
+            <div id="area"> </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>@ Copyright 2017</footer>
+
+</div>
+
+
+
+ <!-- Globe -->
+<script src="http://www.webglearth.com/v2/api.js"></script>
+<script src="/unleashed-dashboard/public/dist/jquery/jquery.min.js"> </script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="/unleashed-dashboard/public/dist/bootstrap/bootstrap.min.js"> </script>
+
+    <script>
+      function initialize() {
+        var earth = new WE.map('earth_div');
+        var options = { bounds: [[35.98245136, -112.26379395],[36.13343831, -112.10998535]],
+                minZoom: 10,
+                maxZoom: 16 };
+
+        WE.tileLayer('/unleashed-dashboard/public/dist/image/opacity/{z}/{x}/{y}.png').addTo(earth);
+
+
+       var markerCustom = WE.marker([10, 120], '/unleashed-dashboard/public/dist/image/ripple.gif', 46, 46).addTo(earth);
+       // markerCustom.bindPopup('<b>Hello world!</b>');
+        // Start a simple rotation animation
+        var before = null;
+        requestAnimationFrame(function animate(now) {
+            var c = earth.getPosition();
+            var elapsed = before? now - before: 0;
+            before = now;
+            earth.setCenter([c[0], c[1] + 0.8*(elapsed/60)]);
+            requestAnimationFrame(animate);
+        });
+
+        var showInfo = function(e) {
+          window.location = '/unleashed-dashboard/public/views/map.html';
+         //alert('YI');
+       }
+       markerCustom.on('click', showInfo);
+
+
+        Highcharts.setOptions({
+            chart: {
+                style: {
+                    fontFamily: 'Olney'
+                }
+            }
+        });
+
+        //bar chart
+        var barChart = Highcharts.chart('bar', {
+                chart: {
+                    type: 'bar',
+                    backgroundColor: null,
+                    height: 170,
+                    events:{
+                      load: function () {
+                      setInterval(function () {
+                        $.get("/unleashed-dashboard/public/bar", function(data, status){
+                          var temp = JSON.parse(data);
+                          // console.log(temp);
+                          barChart.series[0].setData([temp['Nov'].dd, temp['Nov'].prod, temp['Nov'].sla, temp['Nov'].avail]);
+                        });
+                      }, 3000);
+                    }
+                  }
+                },
+                xAxis: {
+                  lineWidth: 0,
+                  minorGridLineWidth: 0,
+                  lineColor: 'transparent',
+                  minorTickLength: 0,
+                  tickLength: 0,
+                  categories: ['Delivered Defect Density', 'Productivty', 'SLA Compliance', 'Availability'],
+                  labels: {
+                      style: {
+                          color: '#ccc'
+                      }
+                  }
+                },
+                yAxis:{
+                  min: 0,
+                  max: 100,
+                  gridLineColor: null,
+                  labels: {
+                    enabled: false
+                  },
+                  title:{
+                    enabled:false
+                  }
+                },
+                title: {
+                  text: null
+                },
+                subtitle: {
+                    text: '',
+                    style: {
+                        display: 'none'
+                    }
+                },
+                legend: {
+                  enabled:false
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                   bar: {
+                       zones: [{
+                           value: 30,
+                           color: 'rgba(240,73,83,0.5)'
+                       },{
+                           color: 'rgba(255,255,255,0.5)'
+                       }]
+                   }
+                },
+                series: [{
+                    name: "Nov 2016",
+                    data: [10, 10, 10, 10]
+                }]
+            });
+
+      var overallTotal = 35;
+      //pie chart
+      var pieChart = Highcharts.chart('pie', {
+          chart: {
+            plotBorderWidth:null,
+            backgroundColor: null,
+            plotShadow: false,
+            type: 'pie',
+            height:280,
+            events:{
+              load: function () {
+                setInterval(function () {
+                  $.get("/unleashed-dashboard/public/pie", function(data, status){
+                    var temp = JSON.parse(data);
+                    // console.log(temp);
+                    pieChart.series[0].setData([['Green', temp.green], ['Yellow', temp.yellow], ['Red', temp.red]]);
+                    overallTotal = temp.red;
+                  });
+                }, 1000);
+              },
+              redraw: addTitle,
+            }
+          },
+
+          subtitle: {
+            text: '',
+            style: {
+              display: 'none'
+            }
+          },
+          legend:{
+            enabled:false
+          },
+          credits:{
+            enabled:false
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: true,
+                  innerSize:'70%',
+                  borderWidth:4,
+                  borderColor:'rgba(25,25,25,0.9)',
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: false
+                  },
+                  showInLegend: true
+              }
+          },
+              series: [{
+
+                  colorByPoint: true,
+                  data: [{
+                      name:' Green',
+                      y: 20,
+                      color: 'rgba(255,255,255,0.25)'
+                  }, {
+                      name: ' Yellow',
+                      y: 10,
+                      color: 'rgba(255,255,255,0.75)'
+                  }, {
+                      name: ' Red',
+                      y: 5,
+                      color: 'rgba(240,73,83,0.5)'
+                  }]
+              }]
+          });
+
+          function addTitle() {
+
+                 if (this.title) {
+                     this.title.destroy();
+                 }
+
+                 var r = this.renderer,
+                     x = this.series[0].center[0] + this.plotLeft,
+                     y = this.series[0].center[1] + this.plotTop;
+                 this.title = r.text(overallTotal , 0, 0)
+                     .css({
+                     color: '#cccccc',
+                     fontSize: '19px'
+                 }).hide()
+                     .add();
+
+                 var bbox = this.title.getBBox();
+                 this.title.attr({
+                     x: x - (bbox.width / 2),
+                     y: y
+                 }).show();
+             }
+    //area chart
+    var areaChart = Highcharts.chart('area', {
+        chart: {
+            type: 'areaspline',
+            backgroundColor: null,
+            events:{
+              load: function () {
+                setInterval(function () {
+                  $.get("/unleashed-dashboard/public/area", function(data, status){
+                    var temp = JSON.parse(data);
+                    // console.log(temp);
+                    areaChart.series[0].setData([temp['PH'].edge, temp['PH'].ppmc, temp['PH'].alm, temp['PH'].ldsm]);
+                    areaChart.series[1].setData([temp['PO'].edge, temp['PO'].ppmc, temp['PO'].alm, temp['PO'].ldsm]);
+                  });
+                }, 3000);
+              }
+            }
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: [
+                'Edge Compliance',
+                'PPMC Compliance',
+                'ALM Compliance',
+                'LDSM Compliance'
+            ],
+            plotBands: [{ // visualize the weekend
+                from: 4.5,
+                to: 6.5,
+                color: 'rgba(68, 170, 213, .2)'
+            }],
+            lineWidth: 0,
+            minorGridLineWidth: 0,
+            lineColor: 'rgba(50,50,50,0.5)',
+            minorTickLength: 0,
+            tickLength: 0,
+        },
+        yAxis: {
+            min:0,
+            max:120,
+            gridLineColor: 'rgba(50,50,50,0.5)',
+            title: {
+                text: null
+            }
+
+        },
+        tooltip: {
+            shared: true,
+            valueSuffix: ' units'
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            areaspline: {
+                fillOpacity: 0.5
+
+            }
+        },
+        series: [{
+            name: 'Philippines',
+            data: [50, 20, 60, 49],
+            zones: [{
+              value: 30,
+              color: 'rgba(97,71,103,0.75)',
+              fillColor:'rgba(97,71,103,0.75)'
+            },{
+              color: 'rgba(255,255,255,0.75)'
+            }]
+        }, {
+            name: 'Poland',
+            data: [100, 20, 10, 60],
+            zones: [{
+              value: 50,
+              color: 'rgba(240,73,83,0.25)',
+              fillColor:'rgba(240,73,83,0.25)'
+            },{
+              color: 'rgba(255,255,255,0.25)'
+            }]
+        }]
+    });
+
+    //radarChart
+    var categories = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    var radarChart =  Highcharts.chart('radar', {
+        chart: {
+            polar: true,
+            backgroundColor: null,
+            type: 'column',
+            events:{
+              load: function () {
+                setInterval(function () {
+                  $.get("/unleashed-dashboard/public/radar", function(data, status){
+                    var temp = JSON.parse(data);
+                    radarChart.series[0].setData(temp);
+                  });
+                }, 3000);
+              }
+            }
+        },
+        series: [{
+            data: [[298,19],[90,6],[283,16],[285,16],[31,7],[173,12],[271,2],[132,18],[263,20],[6,20],[116,8],[231,19],[121,8],[256,9],[70,19]]
+        }],
+        title: {
+            text: null
+        },
+        credits:{
+          enabled:false
+        },
+        pane: {
+            size: '85%',
+            background:[{
+              backgroundColor: "rgba(50, 50, 50, 0.25)",
+              borderColor: 'rgba(50,50,50,0.5)'
+            }]
+
+        },
+
+        xAxis: {
+            min: 0,
+            max: 300,
+            type: "",
+            tickInterval: 22.5,
+            tickmarkPlacement: 'on',
+            labels: {
+                formatter: function () {
+                    return categories[this.value / 22.5] + '°';
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 20,
+            endOnTick: false,
+            showLastLabel: true,
+            title: {
+                text: 'Frequency (%)'
+            },
+            labels: {
+                formatter: function () {
+                    return this.value + '%';
+                }
+            },
+            reversedStacks: false
+        },
+        tooltip: {
+            valueSuffix: '%'
+        },
+        plotOptions: {
+          column: {
+              zones: [{
+                  value: 100,
+                  color: 'rgba(255,255,255,0.5)',
+              },{
+                  color: 'rgba(240,73,83,0.5)',
+              }]
+          },
+          series: {
+              stacking: 'normal',
+              shadow: false,
+              groupPadding: 0,
+              pointPlacement: 'on',
+              borderColor: 'white'
+          }
+        }
+    });
+
+  }//initialize
+  </script>
+</body>
+</html>
